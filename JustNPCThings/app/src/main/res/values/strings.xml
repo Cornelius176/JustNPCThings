@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Just NPC Things</string>
+    <string name="randoText">Test Rando</string>
 </resources>

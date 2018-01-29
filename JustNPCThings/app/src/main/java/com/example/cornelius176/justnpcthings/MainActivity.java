@@ -1,16 +1,16 @@
 package com.example.cornelius176.justnpcthings;
 
-import android.database.Cursor;
 import android.util.Log;
 import android.view.View;
-import android.widget.ListAdapter;
-import android.widget.SimpleCursorAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,26 +26,16 @@ public class MainActivity extends AppCompatActivity {
         //Log.i("info", "Done creating the app");
     //}
 
-
-
-    private Cursor employees;
-    private DataManager db;
+    private List<String> employees;
+    private DatabaseManager db;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        db = new DataManager(this);
-        employees = db.getEmployees(); // you would not typically call this on the main thread
+        db = new DatabaseManager(this, "northwind.db", 1);
 
-        ListAdapter adapter = new SimpleCursorAdapter(this,
-                android.R.layout.simple_list_item_1,
-                employees,
-                new String[] {"FirstName"},
-                new int[] {android.R.id.text1});
-
-        //getListView().setAdapter(adapter);
         Toast.makeText(this, "Much Success!",
         Toast.LENGTH_SHORT).show();
 
@@ -55,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        employees.close();
         db.close();
     }
 
@@ -65,9 +54,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickQuery(View view) {
-        TextView randoText = findViewById(R.id.randoText);
-        DataManager dm = new DataManager(this);
-        //randoText.setText(dm.testGetFirstProfession("BlackSmith"));
+        NPCDatabase ndb = new NPCDatabase(this);
+        ListView listView = findViewById(R.id.listView);
+        List<String> items = ndb.getAllItems();
+        ndb.close();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
+        listView.setAdapter(adapter);
     }
 
     public int GetRandoHundred() {
